@@ -1,0 +1,191 @@
+<div id="regForm" class="reg">
+
+            <div id="signup">
+            <form>
+        <fieldset>
+            <a href="#close" title="Close" class="close">X</a>
+
+            Логин:<br />
+            <input type = "text" name = "login" id="regLogin" placeholder = "Введите Логин" pattern=".{3,}" placeholder="Минимум 3 символа" title="Минимум 3 символа" required="" />
+            <p class="validation01">
+                        <span class="invalid">Минимум 3 символа</span>
+                        <span class="valid">Логин введен корректно</span>
+            </p>
+            <br />
+            <br />
+            Пароль:<br />
+            <input type = "password" name = "password" id="regPassword" placeholder = "Введите Пароль" title="Минимум 5 символов" pattern="(?=^.{5,}$)(?![.\n]).*" required=""/>
+            <p class="validation02">
+                        <span class="invalid">Минимум 5 символов</span>
+                        <span class="valid">Пароль введен корректно</span>
+                    </p>
+            <br />
+            <br />
+            E-mail:<br />
+            <input type = "email" name = "email" id = "regMail" placeholder="e.g. ryan@example.net" title="Введите корректный адрес электронной почты" pattern="^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$" required="">
+            <p class="validation03">
+                        <span class="invalid">Проверьте адрес почты</span>
+                        <span class="valid">E-mail введен корректно</span>
+            </p>
+        </fieldset>
+
+            <input type = "submit" name = "submit_reg" id = "submit_reg" value = "ЗАРЕГИСТРИРОВАТЬСЯ"/>
+            </div>
+            </form>
+
+        </div>
+        <div id = "regMessages">
+
+            </div>
+			<script>
+			$(function() {
+
+$('#submit_reg').click(function() {
+    var login = $('#regLogin').val();
+    var password = $('#regPassword').val();
+    var mail = $('#regMail').val();
+    if (login == '' || password == '' || mail == '') {
+
+    }
+    else {
+        $.ajax({
+            url:        '/reg.php',
+            type:       'POST',
+            cache:      false,
+            data:       {'login':login, 'password':password, 'mail':mail},
+            dataType:   'html',
+            success: function(data){
+                $('#regForm').hide();
+                $('#regMessages').html(data);
+                $('#regMessages').show();
+            }
+        });
+    }
+});
+});
+</script>
+<?php
+
+    require_once "functions.php";
+
+    /* Получаем и обрабатываем данные */
+    $login = escape($_POST['login']);
+    if (strlen($login) == 0) exit;
+    $password = escape($_POST['password']);
+    if (strlen($password) == 0) exit;
+    $mail = escape($_POST['mail']);
+    if (strlen($mail) == 0) exit;
+    $db = mysql_connect("localhost", "root", "");
+    mysql_select_db('auth_reg');
+    $query = "SELECT `id` FROM `users` WHERE `mail`='{$mail}'";
+    $sql = mysql_query($query) or die(mysql_error());
+    if (mysql_num_rows($sql)!=0)
+{
+    echo 'Данный e-mail уже зарегистрирован. Если Вы забыли Ваш пароль - воспользуйтесь опцией восстановления пароля.
+<form action="/#res">
+    <button type="submit" id="return">ВОССТАНОВИТЬ ПАРОЛЬ</button>
+</form>';
+}
+else {
+
+    $password_hash = md5($password.$hash); // Создаём хеш пароля
+
+    $result = $mysqli->query("INSERT INTO `users` (`login`, `password`, `mail`, `date`) VALUES ('$login', '$password_hash', '$mail', UNIX_TIMESTAMP())"); // Добавляем пользователя в базу данных
+
+    if ($result)    
+        $user = '
+Вы успешно зарегистрированы! Теперь Вы можете войти на сайт как зарегистрированный пользователь.
+<a href="#authForm"><input type="button" value="ВОЙТИ НА САЙТ" id="return"/></a>';
+
+    else
+        $user = '
+Данный Логин уже существует! Попробуйте ещё раз или обратитесь к администратору.
+<form action="/#regForm">
+<input type=button onclick="window.location.reload()" id="return" type="submit" value="ВЕРНУТЬСЯ К РЕГИСТРАЦИИ">
+</form>';
+
+    echo $user;
+    }
+$query = "SELECT `mail`
+                FROM `users`
+                                 WHERE
+                `login`='{$login}'
+                LIMIT 1";
+    $sql = mysql_query($query) or die(mysql_error());
+
+$row = mysql_fetch_assoc($sql);
+$mail = $row['mail'];
+
+//шлём пароль на это мыло
+
+mail($mail, "Вы успешно зарегистрированы на нашем сайте", "Здравствуйте, Вы успешно зарегистрированы на нашем сайте. Запомните Ваш Логин. Если Вы забудете свой пароль - воспользуйтесь опцией восстановления пароля. Ваш логин на сайте: $login");
+
+?>
+
+
+
+
+<html>
+    <head>
+        <title>Форма обратной связи</title>
+        <script>
+            function checkForm(obj){
+                var return_value = true;
+                // регулярное выражение, для проверки почтового ящика           
+                var reg_mail = /[0-9a-z_]+@[0-9a-z_^.]+.[a-z]{2,3}/i;
+                // регулярное выражение, для проверки отправителя
+                var reg_sender = /[a-z]+/i;
+                // заносим значение поля почтовый ящик в переменную mail
+                var mail = obj.mail.value;
+                // заносим значение поля отправитель в переменную sender
+                var sender = obj.fio.value;
+                // заносим значение поля сообщение в переменную msg
+                var msg = obj.msg.value;
+                // объявляем переменную куда будет заносится текст сообщения
+                var error_msg = "Не корректно заполнены поля: ";
+               
+                //проверка поля отправитель
+                if(reg_sender.exec(sender) == null && sender ==""){
+                    error_msg += "имя ";
+                    return_value = false;
+                }
+                //проверка поля почтовый ящик
+                if(reg_mail.exec(mail) == null){
+                    error_msg += "email ";
+                    return_value = false;
+                }
+                //проверка поля текст сообщения
+                if(msg == ""){
+                    error_msg += "сообщение ";
+                    return_value = false;
+                }
+                //проверка на наличие ошибок, если возникла ошибка ввыводим текст сообщения
+                if(!return_value)
+                    alert(error_msg);
+                   
+                return return_value;
+            }
+        </script>
+</head>
+<body>
+    <form method = “POST” action=”#” onsubmit="return checkForm(this);">
+        <table>
+            <tr>
+                <td>Ваше имя:</td>
+                <td><input type="text" name="fio"/></td>
+            </tr>
+            <tr>
+                <td>Ваше сообщение:</td>
+                <td><textarea name="msg"></textarea></td>
+            </tr>
+            <tr>
+                <td>Ваш email:</td>
+                <td><input type="text" name="mail"/></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="right"><input type="submit" name="send" value="Отправить"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

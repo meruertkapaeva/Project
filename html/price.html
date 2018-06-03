@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>MK-Hair-Salon | About Us</title>
+<meta charset="utf-8">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="http://socialsnaps.in/wp-content/uploads/2016/11/Mk-Hair-Salon.png" type="image/x-icon">
+<link rel="shortcut icon" href="http://socialsnaps.in/wp-content/uploads/2016/11/Mk-Hair-Salon.png" type="image/x-icon">
+<script src="js/jquery.js"></script>
+<script src="js/jquery-migrate-1.1.1.js"></script>
+<script src="js/bgstretcher.js"></script>
+<script>
+$(document).ready(function () {
+    $('body').bgStretcher({
+        images: ['https://i.pinimg.com/736x/df/ae/5b/dfae5b51cd783696b10509e919adeb12--nail-shop-salon-design.jpg'],
+        imageWidth: 1600,
+        imageHeight: 964,
+        resizeProportionally: true
+    });
+});
+</script>
+<!--[if lt IE 9]>   
+<script src="js/html5shiv.js"></script>
+<link href="css/ie.css" rel="stylesheet" type="text/css" media="screen">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:600" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:700" rel="stylesheet" type="text/css">  
+<![endif]-->
+</head>
+<body>
+<div class="extra-block">
+  <div class="row-top">
+    <div class="main">
+      <ul class="list-soc">
+       <li><a href="https://www.instagram.com/meruert.kapaeva/"><img alt="" src="images/insta.png" style="width:18px; height:18px;></a></a></li>
+        <li><a href="https://mail.google.com/mail/u/0/#inbox"><img alt="" src="images/google.png" style="width:18px; height:18px;"></a></li>
+		<li><a href="https://vk.com/meruert300898"><img alt="" src="images/vk.png" style="width:18px; height:18px;"></a></li>
+		<li><a href="https://my.mail.ru/mail/meruert.kapaeva/"><img alt="" src="images/mail.png" style="width:18px; height:18px;"></a></li>
+		<li><a href="https://www.facebook.com/profile.php?id=100006610952368"><img alt="" src="images/fasebook.png" style="width:18px; height:18px;"></a></li>
+      </ul>
+    </div>
+  </div>
+  <header>
+    <div class="row-nav">
+      <div class="main">
+        <h1 class="logo"><a href="index.html"><img alt=""src="https://psv4.userapi.com/c816438/u296488411/docs/e60d393d13f7/mk.png?extra=OTLY1_pHHlIUskbmMd_UuwtTCzr2-6imk3VZtnQI9Sv6iZreYy1A-bgeRYgZTnIJsnajwmwARV1WdbHFwQ9bT-z4k_Kihm7qF3Uc8Dsmlzk2-Lxw3aeBol8UML3ap7iuJueiExIwfcv8_A"></a></h1>
+        <nav>
+          <ul class="menu">
+            <li><a href="index.html">Главная</a></li>
+            <li class="current"><a href="about-us.html">О нашем салоне</a></li>
+            <li><a href="services.html">Наши услуги</a></li>
+            <li><a href="gallery.html">Галерея работ</a></li>
+            <li><a href="contacts.html">Наши контакты</a></li>
+          </ul>
+        </nav>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </header>
+  
+  
+<body>
+    <button id="load">Load</button>
+    <div>
+      <button id="sortByMaker">Sort by maker</button>
+      <button id="sortByPrice">Sort by price</button>
+    </div>
+    <div id="cards">
+      <img width="300px" height="200px" id="loading" src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"/>
+    </div>
+	</body>
+ <script> 
+<script defer>
+		let a;
+		function process(responses){
+			a = responses;
+			for (var i = 0; i < responses.length; i++) {
+				 var div = document.createElement('div');
+				 div.setAttribute("class","card");
+				 var car = document.createElement('div');
+				 car.setAttribute("class","title");
+				 car.innerHTML=(responses[i].maker+" "+responses[i].model)
+				 div.appendChild(car);
+				 var price = document.createElement('div');
+				 price.setAttribute('class','price');
+				 price.innerHTML=(responses[i].price);
+				 
+				 div.appendChild(price);
+				 document.getElementById("cards").appendChild(div);
+			}
+		}
+		
+		function onSuccess(response){
+			return response.json().then(process);
+		}
+		
+		function onFail(response){}
+		
+		function call(event){
+			document.getElementById('loading').style.display = 'inline-block';
+			document.getElementById('load').innerHTML="Loading..."
+			setTimeout(function(){
+				document.getElementById('loading').style.display = 'none';
+				document.getElementById('load').innerHTML="Items are loaded"
+				fetch("http://demo4296963.mockable.io/listCars").then(onSuccess,onFail);
+			}, 2000);
+		}
+		function sortByMaker(event){
+			document.getElementById('cards').innerHTML="";
+			a.sort((a,b) => a.maker.localeCompare(b.maker));
+			process(a);
+		}
+		function sortByPrice(event){
+			document.getElementById('cards').innerHTML="";
+			a.sort((a,b) => a.price-b.price);
+			process(a);
+		}
+		
+		document.querySelector("#load").addEventListener("click",call);
+		document.querySelector("#sortByMaker").addEventListener("click",sortByMaker);
+		document.querySelector("#sortByPrice").addEventListener("click",sortByPrice);
+    </script>
+  
+  
+  <head>
+    <style>
+      #cards .card{
+        border:1px solid red;
+        display:flex;
+        width:300px;
+      }
+      #cards .card .title{
+        flex-grow: 1;
+      }
+      #cards .card .price{
+        font-weight: bold;
+        padding-right: 20px;
+      }
+      #loading{
+        display: none;
+      }
+      #cards{
+        width:300px;
+        height:200px;
+        border: 1px solid blue;
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <button id="load">Load</button>
+    <div>
+      <button id="sortByMaker">Sort by maker</button>
+      <button id="sortByPrice">Sort by price</button>
+    </div>
+    <div id="cards">
+      <img width="300px" height="200px" id="loading" src="https://upload.wikimedia.org/wikipedia/commons/b/b1/Loading_icon.gif"/>
+    </div>
+
+
+    <script defer>
+		let a;
+		function process(responses){
+			a = responses;
+			for (var i = 0; i < responses.length; i++) {
+				 var div = document.createElement('div');
+				 div.setAttribute("class","card");
+				 var car = document.createElement('div');
+				 car.setAttribute("class","title");
+				 car.innerHTML=(responses[i].maker+" "+responses[i].model)
+				 div.appendChild(car);
+				 var price = document.createElement('div');
+				 price.setAttribute('class','price');
+				 price.innerHTML=(responses[i].price);
+				 
+				 div.appendChild(price);
+				 document.getElementById("cards").appendChild(div);
+			}
+		}
+		
+		function onSuccess(response){
+			return response.json().then(process);
+		}
+		
+		function onFail(response){}
+		
+		function call(event){
+			document.getElementById('loading').style.display = 'inline-block';
+			document.getElementById('load').innerHTML="Loading..."
+			setTimeout(function(){
+				document.getElementById('loading').style.display = 'none';
+				document.getElementById('load').innerHTML="Items are loaded"
+				fetch("http://demo4296963.mockable.io/listCars").then(onSuccess,onFail);
+			}, 2000);
+		}
+		function sortByMaker(event){
+			document.getElementById('cards').innerHTML="";
+			a.sort((a,b) => a.maker.localeCompare(b.maker));
+			process(a);
+		}
+		function sortByPrice(event){
+			document.getElementById('cards').innerHTML="";
+			a.sort((a,b) => a.price-b.price);
+			process(a);
+		}
+		
+		document.querySelector("#load").addEventListener("click",call);
+		document.querySelector("#sortByMaker").addEventListener("click",sortByMaker);
+		document.querySelector("#sortByPrice").addEventListener("click",sortByPrice);
+    </script>
+  </body>
+  
+  
+  <div class="block">
+  <footer>
+    <div class="main aligncenter">
+      <div class="privacy"><strong>MK-Hair-Salon</strong></div>
+    </div>
+  </footer>
+</div>
+</body>
+</html>
